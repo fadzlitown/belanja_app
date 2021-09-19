@@ -1,9 +1,12 @@
+import 'package:belanja_app/widgets/new_transaction.dart';
+import 'package:belanja_app/widgets/transaction_list.dart';
+import 'package:belanja_app/widgets/user_transaction.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
-import '../transaction.dart';
+import 'models/transaction.dart';
 
 void main() {
   runApp(MyApp());
@@ -33,15 +36,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatelessWidget {
-  final List<Transaction> transactions = [
-    Transaction(
-        id: '1', title: 'New Shirt', amount: 29.99, dateTime: DateTime.now()),
-    Transaction(
-        id: '2', title: 'Cap NY', amount: 40.89, dateTime: DateTime.now())
-  ];
-
-  String titleInput;
-  String amountInput;
+  // String titleInput;
+  // String amountInput;
 
   @override
   Widget build(BuildContext context) {
@@ -49,118 +45,33 @@ class MyHomePage extends StatelessWidget {
         appBar: AppBar(
           title: Text('Belanja App'),
         ),
-        body: Column(
+        body: SingleChildScrollView(
+          child: Column(
 
-            /// Column widget important in layout!
-            ///mainAxisAlignment starting from top->bottom,
-            // mainAxisAlignment: MainAxisAlignment.spaceAround,
-            mainAxisAlignment: MainAxisAlignment.start,
+              /// Column widget important in layout!
+              ///mainAxisAlignment starting from top->bottom,
+              // mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.start,
 
-            ///crossAxisAlignment starting from left -> right. def is center
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Card(
-                child: Container(
-                  ///NOTED the widget Text will takes a measurement of the parent.
-                  ///mcm XML view dlm FrameLayout / any layout. Need to learn by doing not read
-                  child: Text(
-                    'Chart',
-                    textAlign: TextAlign.start,
-                  ),
-                  width: double.infinity,
-                  color: Colors.blue,
-                  padding: EdgeInsets.all(10.0),
-                ),
-                elevation: 5,
-              ),
-              Card(
-                child: Container(
-                  margin: EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      TextField(
-                        ///onChanged: required a String function ({void Function(String) onChanged)
-                        onChanged: (val) {
-                          titleInput = val;
-                        },
-                        decoration: InputDecoration(
-                          labelText: 'Title',
-                        ),
-                      ),
-                      TextField(
-                        onChanged: (val) => amountInput = val,
-                        decoration: InputDecoration(labelText: 'Amount'),
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(10),
-                        child: MaterialButton(
-                          onPressed: () {
-                            transactions.add(Transaction(
-                                id: '3',
-                                title: titleInput,
-                                amount: double.tryParse(amountInput),
-                                dateTime: DateTime.now()));
-                            print(transactions);
-                          },
-                          child: Text('Add Transaction'),
-                          padding: EdgeInsets.only(left: 20, right: 20),
-                          color: Colors.purpleAccent,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                elevation: 5,
-              ),
-              Column(
-                  children: transactions.map((e) {
-                return Card(
-                    child: Row(
-                      children: [
-                        Container(
-                          child: Icon(CupertinoIcons.money_dollar),
-                          margin: EdgeInsets.all(5),
-                        ),
-                        Container(
-                          child: Text('\$' + '${e.amount}',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.purpleAccent)),
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 15),
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Colors.purpleAccent, width: 2.0)),
-                          padding: EdgeInsets.all(10),
-                        ),
-                        Column(
-                          children: [
-                            Container(
-                              child: Text(
-                                e.title.toString(),
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                    color: Colors.blue),
-                              ),
-                              margin: EdgeInsets.only(bottom: 8),
-                            ),
-                            Text(
-                              DateFormat('EEE, MMM d, ' 'yy')
-                                  .format(e.dateTime),
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.grey),
-                            )
-                          ],
-
-                          /// left to right
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                        )
-                      ],
+              ///crossAxisAlignment starting from left -> right. def is center
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Card(
+                  child: Container(
+                    ///NOTED the widget Text will takes a measurement of the parent.
+                    ///mcm XML view dlm FrameLayout / any layout. Need to learn by doing not read
+                    child: Text(
+                      'Chart',
+                      textAlign: TextAlign.start,
                     ),
-                    elevation: 5);
-              }).toList())
-            ]));
+                    width: double.infinity,
+                    color: Colors.blue,
+                    padding: EdgeInsets.all(10.0),
+                  ),
+                  elevation: 5,
+                ),
+                UserTransaction()
+              ]),
+        ));
   }
 }
