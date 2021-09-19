@@ -12,9 +12,17 @@ class TransactionList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 300,
-      child: SingleChildScrollView(
-        child: Column(
-            children: list.map((e) {
+
+      /// NOTE:
+      /// ListView() -> good for short list
+      ///  -> will render all UI list item including the invisible items (expensive processes, less performance)
+      /// ListView.builder() -> only render the visible items, load when the item can be seen .
+      /// -- > lazily rendering widgets
+
+      child: ListView.builder(
+        /// itemBuilder is a must --> pass Widget view, used list with current position like RecyclerView
+        /// itemCount -> list count
+        itemBuilder: (ctx, pos) {
           return Card(
               child: Row(
                 children: [
@@ -23,7 +31,7 @@ class TransactionList extends StatelessWidget {
                     margin: EdgeInsets.all(5),
                   ),
                   Container(
-                    child: Text('\$' + '${e.amount}',
+                    child: Text('\$' + '${list[pos].amount.toStringAsFixed(2)}',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.purpleAccent)),
@@ -37,7 +45,7 @@ class TransactionList extends StatelessWidget {
                     children: [
                       Container(
                         child: Text(
-                          e.title.toString(),
+                          list[pos].title.toString(),
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -48,7 +56,7 @@ class TransactionList extends StatelessWidget {
                       Text(
                         // DateFormat('EEE, MMM d, ' 'yy')
                         //     .format(e.dateTime),
-                        DateFormat().add_yMEd().format(e.dateTime),
+                        DateFormat().add_yMEd().format(list[pos].dateTime),
                         style: TextStyle(fontSize: 12, color: Colors.grey),
                       )
                     ],
@@ -59,7 +67,8 @@ class TransactionList extends StatelessWidget {
                 ],
               ),
               elevation: 5);
-        }).toList()),
+        },
+        itemCount: list.length,
       ),
     );
   }

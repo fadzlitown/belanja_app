@@ -27,31 +27,24 @@ class NewTransaction extends StatelessWidget {
               decoration: InputDecoration(
                 labelText: 'Title',
               ),
+
+              /// when Function(String) accepting annoymous func with parameter value
+              /// --> we can used (_) means WE DONT USE THIS VAL!
+              onSubmitted: (_) => submitData(),
             ),
             TextField(
               // onChanged: (val) => amountInput = val,
               keyboardType: TextInputType.number,
               controller: amountInput,
               decoration: InputDecoration(labelText: 'Amount'),
+
+              /// when arg accepting annoymous func with parameter value --> can used (_) means WE DONT USE THIS VAL!
+              onSubmitted: (_) => submitData(),
             ),
             Container(
               margin: EdgeInsets.all(10),
               child: MaterialButton(
-                onPressed: () {
-                  // transactions.add(Transaction(
-                  //     id: '3',
-                  //     title: titleInput.text,
-                  //     amount: double.tryParse(amountInput.text),
-                  //     dateTime: DateTime.now()));
-                  // print(transactions);
-                  addTransaction(Transaction(
-                      id: DateTime.now().toString(),
-                      title: titleInput.text,
-                      amount: double.tryParse(amountInput.text),
-                      dateTime: DateTime.now()));
-
-                  print(titleInput.text + " " + amountInput.text);
-                },
+                onPressed: submitData,
                 child: Text('Add Transaction'),
                 padding: EdgeInsets.only(left: 20, right: 20),
                 color: Colors.purpleAccent,
@@ -62,5 +55,20 @@ class NewTransaction extends StatelessWidget {
       ),
       elevation: 5,
     );
+  }
+
+  void submitData() {
+    final enteredTitle = titleInput.text;
+    final enteredAmount = double.parse(amountInput.text);
+
+    if (enteredTitle.isEmpty || enteredAmount <= 0) {
+      return;
+    }
+
+    addTransaction(Transaction(
+        id: DateTime.now().toString(),
+        title: enteredTitle,
+        amount: enteredAmount,
+        dateTime: DateTime.now()));
   }
 }
