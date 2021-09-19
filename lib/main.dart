@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 import '../transaction.dart';
@@ -39,6 +40,9 @@ class MyHomePage extends StatelessWidget {
         id: '2', title: 'Cap NY', amount: 40.89, dateTime: DateTime.now())
   ];
 
+  String titleInput;
+  String amountInput;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +53,8 @@ class MyHomePage extends StatelessWidget {
 
             /// Column widget important in layout!
             ///mainAxisAlignment starting from top->bottom,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            // mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.start,
 
             ///crossAxisAlignment starting from left -> right. def is center
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -65,6 +70,46 @@ class MyHomePage extends StatelessWidget {
                   width: double.infinity,
                   color: Colors.blue,
                   padding: EdgeInsets.all(10.0),
+                ),
+                elevation: 5,
+              ),
+              Card(
+                child: Container(
+                  margin: EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      TextField(
+                        ///onChanged: required a String function ({void Function(String) onChanged)
+                        onChanged: (val) {
+                          titleInput = val;
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Title',
+                        ),
+                      ),
+                      TextField(
+                        onChanged: (val) => amountInput = val,
+                        decoration: InputDecoration(labelText: 'Amount'),
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(10),
+                        child: MaterialButton(
+                          onPressed: () {
+                            transactions.add(Transaction(
+                                id: '3',
+                                title: titleInput,
+                                amount: double.tryParse(amountInput),
+                                dateTime: DateTime.now()));
+                            print(transactions);
+                          },
+                          child: Text('Add Transaction'),
+                          padding: EdgeInsets.only(left: 20, right: 20),
+                          color: Colors.purpleAccent,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
                 elevation: 5,
               ),
