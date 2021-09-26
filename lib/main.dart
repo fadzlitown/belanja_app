@@ -1,3 +1,4 @@
+import 'package:belanja_app/widgets/chart.dart';
 import 'package:belanja_app/widgets/new_transaction.dart';
 import 'package:belanja_app/widgets/transaction_list.dart';
 import 'package:flutter/cupertino.dart';
@@ -53,11 +54,19 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _userTransactions = [
-    // Transaction(
-    //     id: '1', title: 'New Shirt', amount: 29.99, dateTime: DateTime.now()),
-    // Transaction(
-    //     id: '2', title: 'Cap NY', amount: 40.89, dateTime: DateTime.now())
+    Transaction(
+        id: '1', title: 'New Shirt', amount: 29.99, dateTime: DateTime.now()),
+    Transaction(
+        id: '2', title: 'Cap NY', amount: 40.89, dateTime: DateTime.now())
   ];
+
+  List<Transaction> get _getRecentTransactions {
+    /// where : Returns a new lazy [Iterable] with all elements that satisfy to below condition
+    return _userTransactions.where((element) {
+      return element.dateTime
+          .isAfter(DateTime.now().subtract(Duration(days: 7)));
+    }).toList();
+  }
 
   void _addTransaction(Transaction transaction) {
     setState(() {
@@ -107,17 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Card(
-                child: Container(
-                  ///NOTED the widget Text will takes a measurement of the parent.
-                  ///mcm XML view dlm FrameLayout / any layout. Need to learn by doing not read
-                  child: Text(
-                    'Chart',
-                    textAlign: TextAlign.start,
-                  ),
-                  width: double.infinity,
-                  color: Colors.blue,
-                  padding: EdgeInsets.all(10.0),
-                ),
+                child: Chart(recentTransactions: _getRecentTransactions),
                 elevation: 5,
               ),
 

@@ -42,54 +42,81 @@ class TransactionList extends StatelessWidget {
               /// itemBuilder is a must --> pass Widget view, used list with current position like RecyclerView
               /// itemCount -> list count
               itemBuilder: (ctx, pos) {
-                return Card(
-                    child: Row(
-                      children: [
-                        Container(
-                          child: Icon(CupertinoIcons.money_dollar),
-                          margin: EdgeInsets.all(5),
-                        ),
-                        Container(
-                          child: Text(
-                              '\$' + '${list[pos].amount.toStringAsFixed(2)}',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).primaryColor)),
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 15),
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Theme.of(context).primaryColor,
-                                  width: 2.0)),
-                          padding: EdgeInsets.all(10),
-                        ),
-                        Column(
-                          children: [
-                            Container(
-                              ///if this text require a specific theming, we need to define globally at main class
-                              child: Text(
-                                list[pos].title.toString(),
-                                style: Theme.of(context).textTheme.headline6,
-                              ),
-                              margin: EdgeInsets.only(bottom: 8),
-                            ),
-                            Text(
-                              // DateFormat('EEE, MMM d, ' 'yy')
-                              //     .format(e.dateTime),
-                              DateFormat()
-                                  .add_yMEd()
-                                  .format(list[pos].dateTime),
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.grey),
-                            )
-                          ],
+                /// Option 1 = Card
+                // return Card(
+                //     child: Row(
+                //       children: [
+                //         Container(
+                //           child: Icon(CupertinoIcons.money_dollar),
+                //           margin: EdgeInsets.all(5),
+                //         ),
+                //         Container(
+                //           child: Text(
+                //               '\$' + '${list[pos].amount.toStringAsFixed(2)}',
+                //               style: TextStyle(
+                //                   fontWeight: FontWeight.bold,
+                //                   color: Theme.of(context).primaryColor)),
+                //           margin: EdgeInsets.symmetric(
+                //               horizontal: 20, vertical: 15),
+                //           decoration: BoxDecoration(
+                //               border: Border.all(
+                //                   color: Theme.of(context).primaryColor,
+                //                   width: 2.0)),
+                //           padding: EdgeInsets.all(10),
+                //         ),
+                //         Column(
+                //           children: [
+                //             Container(
+                //               ///if this text require a specific theming, we need to define globally at main class
+                //               child: Text(
+                //                 list[pos].title.toString(),
+                //                 style: Theme.of(context).textTheme.headline6,
+                //               ),
+                //               margin: EdgeInsets.only(bottom: 8),
+                //             ),
+                //             Text(
+                //               // DateFormat('EEE, MMM d, ' 'yy')
+                //               //     .format(e.dateTime),
+                //               DateFormat()
+                //                   .add_yMEd()
+                //                   .format(list[pos].dateTime),
+                //               style:
+                //                   TextStyle(fontSize: 12, color: Colors.grey),
+                //             )
+                //           ],
+                //
+                //           /// left to right
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //         )
+                //       ],
+                //     ),
+                //     elevation: 5);
 
-                          /// left to right
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                        )
-                      ],
-                    ),
-                    elevation: 5);
+                /// Option 2 = ListTile, Alternative of container view item card,
+                ///  leading & title, subtitle list items. leading = widget to display before the title
+                return Card(
+                  elevation: 8,
+                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+                  child: ListTile(
+
+                      ///CircleAvatar use to create a circle shape
+                      /// alternative option, can used Container with fix size & BoxShape.circle shape decoration
+                      leading: CircleAvatar(
+                        radius: 30,
+
+                        /// Can use Padding instead of Container which padding defined.
+                        child: Padding(
+                            padding: EdgeInsets.all(8),
+                            child: FittedBox(
+                                child: Text('\$ ${list[pos].amount}'))),
+                      ),
+                      title: Text(
+                        list[pos].title,
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                      subtitle:
+                          Text(DateFormat.yMMMd().format(list[pos].dateTime))),
+                );
               },
               itemCount: list.length,
             ),
