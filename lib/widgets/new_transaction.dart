@@ -1,13 +1,21 @@
 import 'package:belanja_app/models/transaction.dart';
 import 'package:flutter/material.dart';
 
-class NewTransaction extends StatelessWidget {
-  /// flutter will connect this controller into the field wdget. will listen & save the user's input
-  final titleInput = TextEditingController();
-  final amountInput = TextEditingController();
-
+/// Note: IF THIS Transaction is using StatelessWidget, then the title & amount inputs cannot be kept due to stateless
+/// Hence change to StatefulWidget instead: bcs State will detach from the UI screen & keep the data
+class NewTransaction extends StatefulWidget {
   final Function addTransaction;
   NewTransaction(this.addTransaction);
+
+  @override
+  _NewTransactionState createState() => _NewTransactionState();
+}
+
+class _NewTransactionState extends State<NewTransaction> {
+  /// flutter will connect this controller into the field wdget. will listen & save the user's input
+  final titleInput = TextEditingController();
+
+  final amountInput = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -65,10 +73,14 @@ class NewTransaction extends StatelessWidget {
       return;
     }
 
-    addTransaction(Transaction(
+    ///  by calling 'widget', we can access the property inside the NewTransaction widget
+    widget.addTransaction(Transaction(
         id: DateTime.now().toString(),
         title: enteredTitle,
         amount: enteredAmount,
         dateTime: DateTime.now()));
+
+    ///close the top most screen, & context is coming from the State framework
+    Navigator.of(context).pop();
   }
 }

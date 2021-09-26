@@ -34,22 +34,20 @@ class TransactionList extends StatelessWidget {
                     child: Text('\$' + '${list[pos].amount.toStringAsFixed(2)}',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Colors.purpleAccent)),
+                            color: Theme.of(context).primaryColor)),
                     margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     decoration: BoxDecoration(
-                        border:
-                            Border.all(color: Colors.purpleAccent, width: 2.0)),
+                        border: Border.all(
+                            color: Theme.of(context).primaryColor, width: 2.0)),
                     padding: EdgeInsets.all(10),
                   ),
                   Column(
                     children: [
                       Container(
+                        ///if this text require a specific theming, we need to define globally at main class
                         child: Text(
                           list[pos].title.toString(),
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                              color: Colors.blue),
+                          style: Theme.of(context).textTheme.headline6,
                         ),
                         margin: EdgeInsets.only(bottom: 8),
                       ),
