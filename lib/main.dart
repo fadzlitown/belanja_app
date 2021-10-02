@@ -29,7 +29,9 @@ class MyApp extends StatelessWidget {
               headline6: TextStyle(
                   fontFamily: 'OpenSans',
                   fontSize: 14,
-                  fontWeight: FontWeight.bold)),
+                  fontWeight: FontWeight.bold),
+              button:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           appBarTheme: AppBarTheme(
 
               /// TITLE APPBAR THEME
@@ -87,6 +89,14 @@ class _MyHomePageState extends State<MyHomePage> {
         });
   }
 
+  void _deleteTransaction(String id) {
+    setState(() {
+      _userTransactions.removeWhere((element) {
+        return element.id == id;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -121,9 +131,8 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
 
               /// NewTransaction(_addTransaction),   --> already handle in BottomSheet!
-
               /// pass the func pointer here
-              TransactionList(_userTransactions)
+              TransactionList(_userTransactions, _deleteTransaction)
             ]),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

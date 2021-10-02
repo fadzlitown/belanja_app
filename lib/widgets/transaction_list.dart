@@ -5,13 +5,14 @@ import 'package:intl/intl.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> list;
+  Function deleteTransaction;
 
-  TransactionList(this.list);
+  TransactionList(this.list, this.deleteTransaction);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300,
+      height: 450,
 
       /// NOTE:
       /// ListView() -> good for short list
@@ -98,24 +99,33 @@ class TransactionList extends StatelessWidget {
                   elevation: 8,
                   margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
                   child: ListTile(
+                    ///CircleAvatar use to create a circle shape
+                    /// alternative option, can used Container with fix size & BoxShape.circle shape decoration
+                    leading: CircleAvatar(
+                      radius: 30,
 
-                      ///CircleAvatar use to create a circle shape
-                      /// alternative option, can used Container with fix size & BoxShape.circle shape decoration
-                      leading: CircleAvatar(
-                        radius: 30,
-
-                        /// Can use Padding instead of Container which padding defined.
-                        child: Padding(
-                            padding: EdgeInsets.all(8),
-                            child: FittedBox(
-                                child: Text('\$ ${list[pos].amount}'))),
+                      /// Can use Padding instead of Container which padding defined.
+                      child: Padding(
+                          padding: EdgeInsets.all(8),
+                          child:
+                              FittedBox(child: Text('\$ ${list[pos].amount}'))),
+                    ),
+                    title: Text(
+                      list[pos].title,
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                    subtitle:
+                        Text(DateFormat.yMMMd().format(list[pos].dateTime)),
+                    trailing: IconButton(
+                      icon: Icon(
+                        Icons.delete,
+                        color: Theme.of(context).errorColor,
                       ),
-                      title: Text(
-                        list[pos].title,
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
-                      subtitle:
-                          Text(DateFormat.yMMMd().format(list[pos].dateTime))),
+                      onPressed: () {
+                        deleteTransaction(list[pos].id);
+                      },
+                    ),
+                  ),
                 );
               },
               itemCount: list.length,
