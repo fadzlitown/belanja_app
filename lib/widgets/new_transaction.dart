@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:belanja_app/models/transaction.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
+import 'adaptive_button.dart';
 
 /// Note: IF THIS Transaction is using StatelessWidget, then the title & amount inputs cannot be kept due to stateless
 /// Hence change to StatefulWidget instead: bcs State will detach from the UI screen & keep the data
@@ -76,11 +81,9 @@ class _NewTransactionState extends State<NewTransaction> {
                           : 'Picked Date: ' +
                               DateFormat.yMd().format(_selectedDate)),
                     ),
-                    FlatButton(
-                        onPressed: () => _showDatePicker(),
-                        child: Text('Choose Date',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        textColor: Theme.of(context).primaryColor)
+
+                    ///reduce duplicate by creating reusable general adaptive button based on platform
+                    AdaptiveFlatButton('Choose Date', _showDatePicker)
                   ],
                 ),
               ),

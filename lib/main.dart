@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:belanja_app/widgets/chart.dart';
 import 'package:belanja_app/widgets/new_transaction.dart';
 import 'package:belanja_app/widgets/transaction_list.dart';
@@ -123,23 +125,26 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     );
 
+    ///for optimization, only render once
+    final mediaQuery = MediaQuery.of(context);
+
     ///Get current Orientation info
-    final isLandscapeMode =
-        MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscapeMode = mediaQuery.orientation == Orientation.landscape;
 
     ///Get Transaction List
     final txListWidget = Container(
 
         /// HENCE, list view only needs 0.6 = 60% height allocated
-        height: (MediaQuery.of(context).size.height -
+        height: (mediaQuery.size.height -
                 appBar.preferredSize.height -
-                MediaQuery.of(context).padding.top) *
+                mediaQuery.padding.top) *
             0.7,
         child: TransactionList(_userTransactions, _deleteTransaction));
 
-    return Scaffold(
-      appBar: appBar,
-      body: SingleChildScrollView(
+    /// in iOS SingleChildScrollView will have some issue
+    /// SafeArea = make sure everything positioned within the boundaries & respect the area of screen
+    final pageBody = SafeArea(
+      child: SingleChildScrollView(
         child: Column(
 
             /// Column widget important in layout!
@@ -156,8 +161,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Show Chart'),
-                    Switch(
+                    Text('Show Chart',
+                        style: Theme.of(context).textTheme.headline6),
+
+                    ///Switch = used Switch UI in Material Design
+                    ///Switch.adaptive = based on platform Android (Material) or iOS
+                    Switch.adaptive(
                         value: _showChart,
                         onChanged: (val) {
                           setState(() {
@@ -176,9 +185,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     /// & Calculate size of height dynamically using MediaQuery.of(context).size
                     /// 0.0 = no height <----> 1.0 = full height,
                     /// HENCE, chart view only needs 0.4 = 40% height allocated
-                    height: (MediaQuery.of(context).size.height -
+                    height: (mediaQuery.size.height -
                             appBar.preferredSize.height -
-                            MediaQuery.of(context).padding.top) *
+                            mediaQuery.padding.top) *
                         .3,
                     child: Container(
                         child:
@@ -195,9 +204,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         /// & Calculate size of height dynamically using MediaQuery.of(context).size
                         /// 0.0 = no height <----> 1.0 = full height,
                         /// HENCE, chart view only needs 0.4 = 40% height allocated
-                        height: (MediaQuery.of(context).size.height -
+                        height: (mediaQuery.size.height -
                                 appBar.preferredSize.height -
-                                MediaQuery.of(context).padding.top) *
+                                mediaQuery.padding.top) *
                             .7,
                         child: Container(
                             child: Chart(
@@ -208,10 +217,17 @@ class _MyHomePageState extends State<MyHomePage> {
               /// pass the func pointer here
             ]),
       ),
+    );
+
+    return Scaffold(
+      appBar: appBar,
+      body: pageBody,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () => _startAddNewTransaction(context)),
+      floatingActionButton: Platform.isIOS
+          ? Container()
+          : FloatingActionButton(
+              child: Icon(Icons.add),
+              onPressed: () => _startAddNewTransaction(context)),
     );
   }
 }
