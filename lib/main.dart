@@ -99,21 +99,24 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Belanja App',
-          style: TextStyle(fontFamily: 'Quicksand'),
-        ),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(
-                Icons.add,
-                color: Colors.amber,
-              ),
-              onPressed: () => _startAddNewTransaction(context))
-        ],
+    /// appBar = can be access everywhere & has an appBar size information
+    final appBar = AppBar(
+      title: Text(
+        'Belanja App',
+        style: TextStyle(fontFamily: 'Quicksand'),
       ),
+      actions: <Widget>[
+        IconButton(
+            icon: Icon(
+              Icons.add,
+              color: Colors.amber,
+            ),
+            onPressed: () => _startAddNewTransaction(context))
+      ],
+    );
+
+    return Scaffold(
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
 
@@ -125,14 +128,30 @@ class _MyHomePageState extends State<MyHomePage> {
             ///crossAxisAlignment starting from left -> right. def is center
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Card(
-                child: Chart(recentTransactions: _getRecentTransactions),
-                elevation: 5,
-              ),
+              Container(
+
+                  /// Added Responsive layout size here
+                  /// Calculate size of height dynamically using : MediaQuery.of(context).size
+                  /// 0.0 = no height <----> 1.0 = full height,
+                  /// HENCE, chart view only needs 0.4 = 40% height allocated
+                  height: (MediaQuery.of(context).size.height -
+                          appBar.preferredSize.height -
+                          MediaQuery.of(context).padding.top) *
+                      0.4,
+                  child: Container(
+                      child:
+                          Chart(recentTransactions: _getRecentTransactions))),
 
               /// NewTransaction(_addTransaction),   --> already handle in BottomSheet!
               /// pass the func pointer here
-              TransactionList(_userTransactions, _deleteTransaction)
+              Container(
+
+                  /// HENCE, list view only needs 0.6 = 60% height allocated
+                  height: (MediaQuery.of(context).size.height -
+                          appBar.preferredSize.height -
+                          MediaQuery.of(context).padding.top) *
+                      0.6,
+                  child: TransactionList(_userTransactions, _deleteTransaction))
             ]),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
