@@ -24,71 +24,81 @@ class _NewTransactionState extends State<NewTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Container(
-        margin: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            TextField(
-              ///onChanged: required a String function ({void Function(String) onChanged)
-              // onChanged: (val) {
-              //   titleInput = val;
-              // },
-              keyboardType: TextInputType.text,
-              controller: titleInput,
-              decoration: InputDecoration(
-                labelText: 'Title',
+    /// moving the widget by scrolling on ButtonSheet
+    return SingleChildScrollView(
+      child: Card(
+        child: Container(
+          margin: EdgeInsets.only(
+              top: 10,
+              left: 10,
+              right: 10,
+
+              ///get access to viewInsets property
+              /// entire input are will lift up
+              bottom: MediaQuery.of(context).viewInsets.bottom + 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              TextField(
+                ///onChanged: required a String function ({void Function(String) onChanged)
+                // onChanged: (val) {
+                //   titleInput = val;
+                // },
+                keyboardType: TextInputType.text,
+                controller: titleInput,
+                decoration: InputDecoration(
+                  labelText: 'Title',
+                ),
+
+                /// when Function(String) accepting annoymous func with parameter value
+                /// --> we can used (_) means WE DONT USE THIS VAL!
+                onSubmitted: (_) => submitData(),
+              ),
+              TextField(
+                // onChanged: (val) => amountInput = val,
+                keyboardType: TextInputType.number,
+                controller: amountInput,
+                decoration: InputDecoration(labelText: 'Amount'),
+
+                /// when arg accepting annoymous func with parameter value --> can used (_) means WE DONT USE THIS VAL!
+                onSubmitted: (_) => submitData(),
               ),
 
-              /// when Function(String) accepting annoymous func with parameter value
-              /// --> we can used (_) means WE DONT USE THIS VAL!
-              onSubmitted: (_) => submitData(),
-            ),
-            TextField(
-              // onChanged: (val) => amountInput = val,
-              keyboardType: TextInputType.number,
-              controller: amountInput,
-              decoration: InputDecoration(labelText: 'Amount'),
-
-              /// when arg accepting annoymous func with parameter value --> can used (_) means WE DONT USE THIS VAL!
-              onSubmitted: (_) => submitData(),
-            ),
-
-            /// DatePicker
-            Container(
-              height: 70,
-              child: Row(
-                children: [
-                  ///Expanded = will takes as much as free space available
-                  Expanded(
-                    child: Text(_selectedDate == null
-                        ? 'No Date Chosen'
-                        : 'Picked Date: ' +
-                            DateFormat.yMd().format(_selectedDate)),
-                  ),
-                  FlatButton(
-                      onPressed: () => _showDatePicker(),
-                      child: Text('Choose Date',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      textColor: Theme.of(context).primaryColor)
-                ],
+              /// DatePicker
+              Container(
+                height: 70,
+                child: Row(
+                  children: [
+                    ///Expanded = will takes as much as free space available
+                    Expanded(
+                      child: Text(_selectedDate == null
+                          ? 'No Date Chosen'
+                          : 'Picked Date: ' +
+                              DateFormat.yMd().format(_selectedDate)),
+                    ),
+                    FlatButton(
+                        onPressed: () => _showDatePicker(),
+                        child: Text('Choose Date',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        textColor: Theme.of(context).primaryColor)
+                  ],
+                ),
               ),
-            ),
-            Container(
-              margin: EdgeInsets.all(10),
-              child: MaterialButton(
-                onPressed: submitData,
-                child: Text('Add Transaction'),
-                padding: EdgeInsets.only(left: 20, right: 20),
-                textColor: Theme.of(context).textTheme.button.color,
-                color: Theme.of(context).primaryColor,
-              ),
-            )
-          ],
+              Container(
+                margin: EdgeInsets.all(10),
+                child: MaterialButton(
+                  onPressed: submitData,
+                  child: Text('Add Transaction'),
+                  padding: EdgeInsets.only(left: 20, right: 20),
+                  textColor: Theme.of(context).textTheme.button.color,
+                  color: Theme.of(context).primaryColor,
+                ),
+              )
+            ],
+          ),
         ),
+        elevation: 5,
       ),
-      elevation: 5,
     );
   }
 
