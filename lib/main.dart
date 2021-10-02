@@ -3,10 +3,16 @@ import 'package:belanja_app/widgets/new_transaction.dart';
 import 'package:belanja_app/widgets/transaction_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'models/transaction.dart';
 
 void main() {
+  /// Controlling Orientation - Force always Portrait
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations(
+  //     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
   runApp(MyApp());
 }
 
@@ -56,11 +62,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _userTransactions = [
-    Transaction(
-        id: '1', title: 'New Shirt', amount: 29.99, dateTime: DateTime.now()),
-    Transaction(
-        id: '2', title: 'Cap NY', amount: 40.89, dateTime: DateTime.now())
+    // Transaction(
+    //     id: '1', title: 'New Shirt', amount: 29.99, dateTime: DateTime.now()),
+    // Transaction(
+    //     id: '2', title: 'Cap NY', amount: 40.89, dateTime: DateTime.now())
   ];
+
+  bool _showChart = false;
 
   List<Transaction> get _getRecentTransactions {
     /// where : Returns a new lazy [Iterable] with all elements that satisfy to below condition
@@ -115,6 +123,20 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     );
 
+    ///Get current Orientation info
+    final isLandscapeMode =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
+    ///Get Transaction List
+    final txListWidget = Container(
+
+        /// HENCE, list view only needs 0.6 = 60% height allocated
+        height: (MediaQuery.of(context).size.height -
+                appBar.preferredSize.height -
+                MediaQuery.of(context).padding.top) *
+            0.7,
+        child: TransactionList(_userTransactions, _deleteTransaction));
+
     return Scaffold(
       appBar: appBar,
       body: SingleChildScrollView(
@@ -128,30 +150,62 @@ class _MyHomePageState extends State<MyHomePage> {
             ///crossAxisAlignment starting from left -> right. def is center
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Container(
+              /// Alternative Landscape solution, by using Switch to add the UI Screen logic
+              /// if isLandscapeMode only, then show ROW Text & Switch otherwise empty
+              if (isLandscapeMode)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Show Chart'),
+                    Switch(
+                        value: _showChart,
+                        onChanged: (val) {
+                          setState(() {
+                            _showChart = val;
+                          });
+                        })
+                  ],
+                ),
 
-                  /// Added Responsive layout size here
-                  /// Calculate size of height dynamically using : MediaQuery.of(context).size
-                  /// 0.0 = no height <----> 1.0 = full height,
-                  /// HENCE, chart view only needs 0.4 = 40% height allocated
-                  height: (MediaQuery.of(context).size.height -
-                          appBar.preferredSize.height -
-                          MediaQuery.of(context).padding.top) *
-                      0.4,
-                  child: Container(
-                      child:
-                          Chart(recentTransactions: _getRecentTransactions))),
+              /// if Potreit only, then show Chart & List
+              if (!isLandscapeMode)
+                Container(
+
+                    /// Added Responsive layout size here.
+                    /// MediaQuery = allows to fetch info about the device orientation, measures & user settings
+                    /// & Calculate size of height dynamically using MediaQuery.of(context).size
+                    /// 0.0 = no height <----> 1.0 = full height,
+                    /// HENCE, chart view only needs 0.4 = 40% height allocated
+                    height: (MediaQuery.of(context).size.height -
+                            appBar.preferredSize.height -
+                            MediaQuery.of(context).padding.top) *
+                        .3,
+                    child: Container(
+                        child:
+                            Chart(recentTransactions: _getRecentTransactions))),
+              if (!isLandscapeMode) txListWidget,
+
+              /// if isLandscapeMode & showChart only, then show Chart. Otherwise show List
+              if (isLandscapeMode)
+                _showChart
+                    ? Container(
+
+                        /// Added Responsive layout size here.
+                        /// MediaQuery = allows to fetch info about the device orientation, measures & user settings
+                        /// & Calculate size of height dynamically using MediaQuery.of(context).size
+                        /// 0.0 = no height <----> 1.0 = full height,
+                        /// HENCE, chart view only needs 0.4 = 40% height allocated
+                        height: (MediaQuery.of(context).size.height -
+                                appBar.preferredSize.height -
+                                MediaQuery.of(context).padding.top) *
+                            .7,
+                        child: Container(
+                            child: Chart(
+                                recentTransactions: _getRecentTransactions)))
+                    : txListWidget
 
               /// NewTransaction(_addTransaction),   --> already handle in BottomSheet!
               /// pass the func pointer here
-              Container(
-
-                  /// HENCE, list view only needs 0.6 = 60% height allocated
-                  height: (MediaQuery.of(context).size.height -
-                          appBar.preferredSize.height -
-                          MediaQuery.of(context).padding.top) *
-                      0.6,
-                  child: TransactionList(_userTransactions, _deleteTransaction))
             ]),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

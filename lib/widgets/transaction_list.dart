@@ -21,23 +21,27 @@ class TransactionList extends StatelessWidget {
       /// -- > lazily rendering widgets
 
       child: list.isEmpty
-          ? Column(
-              children: [
-                SizedBox(
-                  height: 50,
-                ),
-                Text('No Transactions yet'),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  height: 200,
-                  child: Image.asset('assets/images/coronavirus.png',
+          ? LayoutBuilder(
+              builder: (ctx, constraints) {
+                return Column(
+                  children: [
+                    SizedBox(
+                      height: constraints.maxHeight * 0.05,
+                    ),
+                    Text('No Transactions yet'),
+                    SizedBox(
+                      height: constraints.maxHeight * 0.1,
+                    ),
+                    Container(
+                      height: constraints.maxHeight * 0.6,
+                      child: Image.asset('assets/images/coronavirus.png',
 
-                      /// BoxFit.cover respect the boundary of the container
-                      fit: BoxFit.cover),
-                )
-              ],
+                          /// BoxFit.cover respect the boundary of the container
+                          fit: BoxFit.cover),
+                    )
+                  ],
+                );
+              },
             )
           : ListView.builder(
               /// itemBuilder is a must --> pass Widget view, used list with current position like RecyclerView
