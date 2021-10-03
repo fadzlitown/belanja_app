@@ -1,4 +1,5 @@
 import 'package:belanja_app/models/transaction.dart';
+import 'package:belanja_app/widgets/transaction_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +12,8 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('build TransactionList');
+
     return Container(
       height: 450,
 
@@ -28,7 +31,10 @@ class TransactionList extends StatelessWidget {
                     SizedBox(
                       height: constraints.maxHeight * 0.05,
                     ),
-                    Text('No Transactions yet'),
+
+                    /// const Text('..') = boleh letak const bcs 'No Transactions yet' val TIDAK AKAN BERUBAH!!, const tells Flutter the value will never change!
+                    /// good for performance
+                    const Text('No Transactions yet'),
                     SizedBox(
                       height: constraints.maxHeight * 0.1,
                     ),
@@ -99,48 +105,8 @@ class TransactionList extends StatelessWidget {
 
                 /// Option 2 = ListTile, Alternative of container view item card,
                 ///  leading & title, subtitle list items. leading = widget to display before the title
-                return Card(
-                  elevation: 8,
-                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
-                  child: ListTile(
-                    ///CircleAvatar use to create a circle shape
-                    /// alternative option, can used Container with fix size & BoxShape.circle shape decoration
-                    leading: CircleAvatar(
-                      radius: 30,
-
-                      /// Can use Padding instead of Container which padding defined.
-                      child: Padding(
-                          padding: EdgeInsets.all(8),
-                          child:
-                              FittedBox(child: Text('\$ ${list[pos].amount}'))),
-                    ),
-                    title: Text(
-                      list[pos].title,
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                    subtitle:
-                        Text(DateFormat.yMMMd().format(list[pos].dateTime)),
-
-                    /// Adding condition based on device size using MediaQuery size (not checking on orientation but sizes)
-                    trailing: MediaQuery.of(context).size.width > 360
-                        ? FlatButton.icon(
-                            onPressed: () {
-                              deleteTransaction(list[pos].id);
-                            },
-                            icon: Icon(Icons.delete),
-                            textColor: Theme.of(context).errorColor,
-                            label: Text('Delete'))
-                        : IconButton(
-                            icon: Icon(
-                              Icons.delete,
-                              color: Theme.of(context).errorColor,
-                            ),
-                            onPressed: () {
-                              deleteTransaction(list[pos].id);
-                            },
-                          ),
-                  ),
-                );
+                return TransactionItem(
+                    item: list[pos], deleteTransaction: deleteTransaction);
               },
               itemCount: list.length,
             ),

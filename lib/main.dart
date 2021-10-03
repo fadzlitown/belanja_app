@@ -20,6 +20,18 @@ void main() {
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
+  /// Common Problem : Flutter needs to recalculate everything on the screen
+  /// when build gets re-build ? --> by calling setState / orientation change, soft keyboard etc
+  /// will trigger build when there's an update the configuration changes -> new UI screen
+
+  /// Widget tree jobs to provide config for element & render tree
+  /// Element tree jobs to connect widget & render tree, manage state, under render tree when widget tree changes
+  /// Widget tree are immutable, it already has properties provided. (so every rebuild, it just changes a new value references)
+  /// the state eg. _MyHomePageState is detach from the Widget. Thus, for every UI rebuild, the state will be stored
+  /// When setState triggered, The other widget tree also will be kept on Element tree (created by flutter),
+  /// Element tree can auto update its ref when a new configuration is available & re-render the UI.
+  /// build() = runs very ofter & rebuilds the widget tree / parts of it
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -107,8 +119,76 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  ///Builder method = manage the logic & more readable code
+  List<Widget> _buildLandscapeContent(
+      MediaQueryData mediaQuery, AppBar appBar, Container txListWidget) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('Show Chart', style: Theme.of(context).textTheme.headline6),
+
+          ///Switch = used Switch UI in Material Design
+          ///Switch.adaptive = based on platform Android (Material) or iOS
+          Switch.adaptive(
+              value: _showChart,
+              onChanged: (val) {
+                setState(() {
+                  _showChart = val;
+                });
+              })
+        ],
+      ),
+
+      /// if isLandscapeMode & showChart only, then show Chart. Otherwise show List
+      _showChart
+          ? Container(
+
+              /// Added Responsive layout size here.
+              /// MediaQuery = allows to fetch info about the device orientation, measures & user settings
+              /// & Calculate size of height dynamically using MediaQuery.of(context).size
+              /// 0.0 = no height <----> 1.0 = full height,
+              /// HENCE, chart view only needs 0.4 = 40% height allocated
+              height: (mediaQuery.size.height -
+                      appBar.preferredSize.height -
+                      mediaQuery.padding.top) *
+                  .7,
+              child: Container(
+                  child: Chart(recentTransactions: _getRecentTransactions)))
+          : txListWidget
+    ];
+  }
+
+  List<Widget> _buildPotraitContent(
+      MediaQueryData mediaQueryData, AppBar appBar, Container txListWidget) {
+    return [
+      Container(
+
+          /// Added Responsive layout size here.
+          /// MediaQuery = allows to fetch info about the device orientation, view measures, viewInset & user settings = any changes will cause rebuild
+          /// & Calculate size of height dynamically using MediaQuery.of(context).size
+          /// 0.0 = no height <----> 1.0 = full height,
+          /// HENCE, chart view only needs 0.4 = 40% height allocated
+          height: (mediaQueryData.size.height -
+                  appBar.preferredSize.height -
+                  mediaQueryData.padding.top) *
+              .3,
+          child: Container(
+              child: Chart(recentTransactions: _getRecentTransactions))),
+      txListWidget
+    ];
+  }
+
+  Widget _buildAndroidPlatform() {
+    return FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () => _startAddNewTransaction(context));
+  }
+
   @override
   Widget build(BuildContext context) {
+    print('build _MyHomePageState');
+
     /// appBar = can be access everywhere & has an appBar size information
     final appBar = AppBar(
       title: Text(
@@ -158,60 +238,13 @@ class _MyHomePageState extends State<MyHomePage> {
               /// Alternative Landscape solution, by using Switch to add the UI Screen logic
               /// if isLandscapeMode only, then show ROW Text & Switch otherwise empty
               if (isLandscapeMode)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Show Chart',
-                        style: Theme.of(context).textTheme.headline6),
+                ..._buildLandscapeContent(mediaQuery, appBar, txListWidget),
 
-                    ///Switch = used Switch UI in Material Design
-                    ///Switch.adaptive = based on platform Android (Material) or iOS
-                    Switch.adaptive(
-                        value: _showChart,
-                        onChanged: (val) {
-                          setState(() {
-                            _showChart = val;
-                          });
-                        })
-                  ],
-                ),
+              ///... flattening a list of widget into this children widgets (like merge multiple views)
 
               /// if Potreit only, then show Chart & List
               if (!isLandscapeMode)
-                Container(
-
-                    /// Added Responsive layout size here.
-                    /// MediaQuery = allows to fetch info about the device orientation, measures & user settings
-                    /// & Calculate size of height dynamically using MediaQuery.of(context).size
-                    /// 0.0 = no height <----> 1.0 = full height,
-                    /// HENCE, chart view only needs 0.4 = 40% height allocated
-                    height: (mediaQuery.size.height -
-                            appBar.preferredSize.height -
-                            mediaQuery.padding.top) *
-                        .3,
-                    child: Container(
-                        child:
-                            Chart(recentTransactions: _getRecentTransactions))),
-              if (!isLandscapeMode) txListWidget,
-
-              /// if isLandscapeMode & showChart only, then show Chart. Otherwise show List
-              if (isLandscapeMode)
-                _showChart
-                    ? Container(
-
-                        /// Added Responsive layout size here.
-                        /// MediaQuery = allows to fetch info about the device orientation, measures & user settings
-                        /// & Calculate size of height dynamically using MediaQuery.of(context).size
-                        /// 0.0 = no height <----> 1.0 = full height,
-                        /// HENCE, chart view only needs 0.4 = 40% height allocated
-                        height: (mediaQuery.size.height -
-                                appBar.preferredSize.height -
-                                mediaQuery.padding.top) *
-                            .7,
-                        child: Container(
-                            child: Chart(
-                                recentTransactions: _getRecentTransactions)))
-                    : txListWidget
+                ..._buildPotraitContent(mediaQuery, appBar, txListWidget),
 
               /// NewTransaction(_addTransaction),   --> already handle in BottomSheet!
               /// pass the func pointer here
@@ -223,11 +256,8 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: appBar,
       body: pageBody,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Platform.isIOS
-          ? Container()
-          : FloatingActionButton(
-              child: Icon(Icons.add),
-              onPressed: () => _startAddNewTransaction(context)),
+      floatingActionButton:
+          Platform.isIOS ? Container() : _buildAndroidPlatform(),
     );
   }
 }

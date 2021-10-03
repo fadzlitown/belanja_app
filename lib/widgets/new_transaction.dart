@@ -40,6 +40,7 @@ class _NewTransactionState extends State<NewTransaction> {
 
               ///get access to viewInsets property
               /// entire input are will lift up
+              /// MediaQuery.of(context) = will trigger UI rebuild
               bottom: MediaQuery.of(context).viewInsets.bottom + 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,

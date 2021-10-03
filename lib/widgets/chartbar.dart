@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 
 class ChartBar extends StatelessWidget {
-  String label;
-  double spendingAmount;
-  double spendingTotalAmount;
+  final String label;
+  final double spendingAmount;
+  final double spendingTotalAmount;
 
-  ChartBar(this.label, this.spendingAmount, this.spendingTotalAmount);
+  /// can make const constructor if all the attributes are final = this instance will not be changes even in compile time
+  /// cannot assign a new value
+  /// immutable = const
+  const ChartBar(this.label, this.spendingAmount, this.spendingTotalAmount);
 
   @override
   Widget build(BuildContext context) {
+    print('build ChartBar');
+
     /// LayoutBuilder has constraints function
     /// = LinearLayout weight to distribute the spaces between widgets
     /// each widget needs to set -> height: constraints.maxHeight * (no % height)

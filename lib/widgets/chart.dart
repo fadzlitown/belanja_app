@@ -43,7 +43,7 @@ class Chart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // print(groupTransactionValues);
+    print('build Chart');
 
     return Card(
         elevation: 6,
@@ -60,6 +60,8 @@ class Chart extends StatelessWidget {
               return Flexible(
                 /// FlexFit.tight = force a child to its width, sized & cant grow!
                 fit: FlexFit.tight,
+
+                /// const ChartBar(..) = tak boleh letak const bcs data[..] values dynamic
                 child: ChartBar(
                     data['day'],
                     data['amount'],
