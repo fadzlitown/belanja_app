@@ -74,7 +74,7 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   final List<Transaction> _userTransactions = [
     // Transaction(
     //     id: '1', title: 'New Shirt', amount: 29.99, dateTime: DateTime.now()),
@@ -83,6 +83,32 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
 
   bool _showChart = false;
+
+  /// Understanding App lifecycle. eg. Activity lifecycle
+  @override
+  void initState() {
+    ///observers are notified when app states / events happened
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+    print("app initState");
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    ///called when the app lifecycle changes
+    /// Home button pressed / switch other app:  inactive -> paused
+    /// Home to Return to app:  pause -> resume
+    print(state);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+
+    ///clear here to avoid memory leak
+    super.dispose();
+    print("app dispose");
+  }
 
   List<Transaction> get _getRecentTransactions {
     /// where : Returns a new lazy [Iterable] with all elements that satisfy to below condition
@@ -98,6 +124,8 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  /// BuildContext = each widget has its own Context attached, flutter use to understand where this widget belongs.
+  /// All contexts know about each others in widget tree
   void _startAddNewTransaction(BuildContext ctx) {
     showModalBottomSheet(
         context: ctx,

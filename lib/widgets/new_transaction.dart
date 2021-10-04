@@ -12,10 +12,15 @@ import 'adaptive_button.dart';
 class NewTransaction extends StatefulWidget {
   final Function addTransaction;
 
-  NewTransaction(this.addTransaction);
+  NewTransaction(this.addTransaction) {
+    print('NewTransaction: Constructor');
+  }
 
   @override
-  _NewTransactionState createState() => _NewTransactionState();
+  _NewTransactionState createState() {
+    print('NewTransaction: createState');
+    return _NewTransactionState();
+  }
 }
 
 class _NewTransactionState extends State<NewTransaction> {
@@ -27,8 +32,21 @@ class _NewTransactionState extends State<NewTransaction> {
   //not final, datetime val can be changed
   DateTime _selectedDate;
 
+  _NewTransactionState() {
+    print('NewTransaction: _NewTransactionState Constructor');
+  }
+
+  @override
+  void initState() {
+    /// load from DB / https
+    super.initState();
+    print('NewTransaction: _NewTransactionState initState');
+  }
+
   @override
   Widget build(BuildContext context) {
+    print('NewTransaction: _NewTransactionState build');
+
     /// moving the widget by scrolling on ButtonSheet
     return SingleChildScrollView(
       child: Card(
@@ -104,6 +122,19 @@ class _NewTransactionState extends State<NewTransaction> {
         elevation: 5,
       ),
     );
+  }
+
+  @override
+  void didUpdateWidget(NewTransaction oldWidget) {
+    /// can compare the old & new widget that belong the state
+    super.didUpdateWidget(oldWidget);
+    print('NewTransaction: _NewTransactionState didUpdateWidget');
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    print('NewTransaction: _NewTransactionState dispose');
   }
 
   void submitData() {

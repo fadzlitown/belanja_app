@@ -6,6 +6,10 @@ class TransactionItem extends StatelessWidget {
   final Transaction item;
   final Function deleteTransaction;
 
+  /// what is a generated key in Widget?
+  /// Most of the StatelessWidget no need a key.
+  /// keys only matter if you're working with stateful widgets in a list
+  /// Flutter may attach a state object to the wrong widget (if widgets moved or where deleted) if you're not using keys.
   const TransactionItem({this.item, this.deleteTransaction});
 
   @override
