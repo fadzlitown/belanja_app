@@ -1,16 +1,33 @@
+import 'dart:math';
+
 import 'package:belanja_app/models/transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class TransactionItem extends StatelessWidget {
+class TransactionItem extends StatefulWidget {
   final Transaction item;
   final Function deleteTransaction;
 
   /// what is a generated key in Widget?
-  /// Most of the StatelessWidget no need a key.
-  /// keys only matter if you're working with stateful widgets in a list
+  /// Most of the StatelessWidget no need a key, except StatefulWidget (required key sometimes)
   /// Flutter may attach a state object to the wrong widget (if widgets moved or where deleted) if you're not using keys.
-  const TransactionItem({this.item, this.deleteTransaction});
+  const TransactionItem({Key key, this.item, this.deleteTransaction})
+      : super(key: key);
+
+  @override
+  _TransactionItemState createState() => _TransactionItemState();
+}
+
+class _TransactionItemState extends State<TransactionItem> {
+  MaterialColor _bgColor;
+
+  @override
+  void initState() {
+    // before build() runs, setup here
+    const availableColors = [Colors.red, Colors.grey, Colors.green];
+    _bgColor = availableColors[Random().nextInt(availableColors.length)];
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,26 +39,27 @@ class TransactionItem extends StatelessWidget {
         /// alternative option, can used Container with fix size & BoxShape.circle shape decoration
         leading: CircleAvatar(
           radius: 30,
+          backgroundColor: _bgColor,
 
           /// Can use Padding instead of Container which padding defined.
           child: Padding(
               padding: const EdgeInsets.all(8),
-              child: FittedBox(child: Text('\$ ${item.amount}'))),
+              child: FittedBox(child: Text('\$ ${widget.item.amount}'))),
         ),
         title: Text(
-          item.title,
+          widget.item.title,
           style: Theme.of(context).textTheme.headline6,
         ),
         subtitle:
 
             /// const Text(..) = TAK BOLEH bcs dateTime is dynamic content
-            Text(DateFormat.yMMMd().format(item.dateTime)),
+            Text(DateFormat.yMMMd().format(widget.item.dateTime)),
 
         /// Adding condition based on device size using MediaQuery size (not checking on orientation but sizes)
         trailing: MediaQuery.of(context).size.width > 360
             ? FlatButton.icon(
                 onPressed: () {
-                  deleteTransaction(item.id);
+                  widget.deleteTransaction(widget.item.id);
                 },
                 icon: const Icon(Icons.delete),
                 textColor: Theme.of(context).errorColor,
@@ -54,7 +72,7 @@ class TransactionItem extends StatelessWidget {
                   color: Theme.of(context).errorColor,
                 ),
                 onPressed: () {
-                  deleteTransaction(item.id);
+                  widget.deleteTransaction(widget.item.id);
                 },
               ),
       ),
